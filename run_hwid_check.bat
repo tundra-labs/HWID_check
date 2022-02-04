@@ -83,3 +83,4 @@ goto :check_compatibility
 
 :stop
 lighthouse_watchman_update -Rw3
+set /P c=Press Enter to quit... 
