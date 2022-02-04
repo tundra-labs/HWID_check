@@ -17,6 +17,9 @@ timeout /t 5 /nobreak > nul
 
 set version_cmd='lighthouse_watchman_update.exe -aw3'
 
+
+set serial_number=unknown
+
 set hwid_current=0
 set product_id_check=f0000109
 set product_id_required=f1030009
@@ -28,9 +31,10 @@ set /a bl_version_required=1629157907
 for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
   
   if "%%A"=="Hardware" (set hwid_current=%%B)
+  if "%%A"=="Serial" (set serial_number=lhr-%%B)
   if "%%A"=="Bootloader" (set /a bl_version_current=%%B)
 )
-
+@echo Device Serial number is %serial_number%
 @echo Device Bootloader Version is %bl_version_current%
 if %bl_version_current% EQU %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker)
 
@@ -77,10 +81,10 @@ goto :bad_bl_version
 @echo -- Updating Bootloader --
 lighthouse_watchman_update -Rw3
 timeout /nobreak /t 4
-lighthouse_watchman_update.exe --target=bootloader watchman_v3_bootloader_umodule.fw
+lighthouse_watchman_update.exe -s %serial_number% --hwid 0x%hwid_current% --target=bootloader watchman_v3_bootloader_umodule.fw
 timeout /nobreak /t 4
 goto :check_compatibility
 
 :stop
 lighthouse_watchman_update -Rw3
-set /P c=Press Enter to quit... 
+set /P c=Press Enter to quit...
