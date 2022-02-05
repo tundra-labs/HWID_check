@@ -12,6 +12,8 @@ goto :stop
 
 :check_device
 @echo.
+@echo Do not unplug the device at any point!
+@echo.
 @echo Verifying device data, please wait...
 
 set version_csl='lighthouse_console.exe version'
@@ -154,5 +156,9 @@ timeout /t 5 /nobreak >nul
 goto :check_compatibility
 
 :stop
+@echo.
+@echo Resetting device, please wait...
 lighthouse_watchman_update.exe -Rw3 >nul 2>&1
+timeout /t 5 /nobreak >nul
+@echo Device is now safe to unplug!
 set /P c=Press Enter to quit...
