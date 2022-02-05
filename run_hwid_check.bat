@@ -4,13 +4,13 @@
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
 @echo.
-if /I "%c%" EQU "Y" goto :check_device
-if /I "%c%" EQU "y" goto :check_device
+if /I "%c%" EQU "Y" goto :check_compatibility
+if /I "%c%" EQU "y" goto :check_compatibility
 if /I "%c%" EQU "N" goto :stop
 if /I "%c%" EQU "n" goto :stop
 goto :stop
 
-:check_device
+:check_compatibility
 @echo.
 @echo Do not unplug the device at any point!
 @echo.
@@ -46,9 +46,8 @@ for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
   if "%%A" EQU "Bootloader" (set /a bl_version_current=%%B)
 )
 
-:check_compatibility
 @echo.
-@echo -- Verifying compatibility --
+@echo -- Compatibility status --
 
 @echo.
 @echo Device serial number is %serial_number%
