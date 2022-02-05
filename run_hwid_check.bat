@@ -47,7 +47,7 @@ for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
 )
 
 @echo.
-@echo -- Compatibility status --
+@echo -- Device status --
 
 @echo.
 @echo Device serial number is %serial_number%
