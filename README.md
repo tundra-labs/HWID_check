@@ -2,7 +2,7 @@
 
 Some Kickstarter backers have received Tundra Trackers that have the incorrect Hardware ID and/or bootloader firmware revision.  This package is intended to look for these issues and repair if the user accepts the changes.
 
-These scripts must run on a Microsoft Windows PC.  It is only tested on Windows 10 but 11 probably works too...
+These scripts must run on a Microsoft Windows PC.  It is only tested on Windows 10 and 11.
 
 Many of these tools are dangerous to use and can cause damage to devices that are not Tundra Tracker.  Safety mechanisms have been build into the run_hwid_check.bat script but it is still required that:
 
