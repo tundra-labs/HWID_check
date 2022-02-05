@@ -34,16 +34,22 @@ for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
   if "%%A"=="Serial" (set serial_number=lhr-%%B)
   if "%%A"=="Bootloader" (set /a bl_version_current=%%B)
 )
+
 @echo Device Serial number is %serial_number%
 @echo Device Bootloader Version is %bl_version_current%
 if %bl_version_current% EQU %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker)
-
-if %bl_version_current% EQU %bl_version_check% goto :bad_bl_version
-
-:post_bl_check
-
 @echo Device HWID is %hwid_current%
 if "%hwid_current%" == "%product_id_required%" (@echo This is the correct HWID for Tundra Tracker)
+if "%hwid_current%" == "%product_id_check%" (@echo This is an older HWID and should be updated)
+
+if "%hwid_current%" == "%product_id_required%" ( goto :hwid_is_safe )
+if "%hwid_current%" == "%product_id_check%" ( goto :hwid_is_safe )
+@echo HWID of 0x%hwid_current% is not associated with Tundra Tracker, quit for safety
+goto :stop
+:hwid_is_safe
+
+if %bl_version_current% LSS %bl_version_check% goto :bad_bl_version
+:post_bl_check
 
 if "%hwid_current%" == "%product_id_required%" ( goto :post_hwid )
 if "%hwid_current%" == "%product_id_check%" ( goto :bad_hwid )
