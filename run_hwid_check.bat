@@ -27,7 +27,7 @@ set /a active_devices=0
 set serial_number=unknown
 
 set /a fw_version_current=0
-set /a fw_version_required=1632556731
+set /a fw_version_required=1637337510
 :: Firmware version from file in \SteamVR\drivers\
 
 set hwid_current=0
