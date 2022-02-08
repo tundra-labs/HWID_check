@@ -149,8 +149,6 @@ goto :bad_hwid
 :update_hwid
 lighthouse_watchman_update.exe -Bw3 0xF1030009
 timeout /t 8 /nobreak >nul
-lighthouse_watchman_update.exe -bw3 >nul 2>&1
-timeout /t 8 /nobreak >nul
 :: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
 
@@ -172,8 +170,6 @@ timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -s %serial_number% --target=application "tundra-tracker_application_1637337510.fw"
 :: Local firmware version distributed by SteamVR.
 timeout /t 8 /nobreak >nul
-lighthouse_watchman_update.exe -bw3 >nul 2>&1
-timeout /t 8 /nobreak >nul
 :: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
 
@@ -193,6 +189,7 @@ lighthouse_watchman_update.exe -Rw3 >nul 2>&1
 timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -s %serial_number% --hwid 0x%hwid_current% --target=bootloader watchman_v3_bootloader_umodule.fw
 timeout /t 8 /nobreak >nul
+:: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
 
 :err
