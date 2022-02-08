@@ -168,7 +168,7 @@ goto :bad_fw_version
 lighthouse_watchman_update.exe -Rw3 >nul 2>&1
 timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -s %serial_number% --target=application "tundra-tracker_application_1637337510.fw"
-:: Local firmware version distributed by SteamVR.
+:: Local firmware version.
 timeout /t 8 /nobreak >nul
 :: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
