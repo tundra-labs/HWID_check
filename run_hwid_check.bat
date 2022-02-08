@@ -1,8 +1,8 @@
 @echo off
-@echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script
-@echo This is version number 1.3 changed on Feb 8th 2022
+@echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
+@echo This is version number 1.3 changed on Feb 8th 2022.
 @echo.
-@echo This script can cause damage to SteamVR devices that are not Tundra Tracker
+@echo This script can cause damage to SteamVR devices that are not Tundra Tracker!
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
 @echo.
