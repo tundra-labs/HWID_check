@@ -1,5 +1,7 @@
 @echo off
-
+@echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script
+@echo This is version number 1.3 changed on Feb 8th 2022
+@echo.
 @echo This script can cause damage to SteamVR devices that are not Tundra Tracker
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
@@ -165,7 +167,7 @@ goto :bad_fw_version
 @echo -- Updating firmware --
 lighthouse_watchman_update.exe -Rw3 >nul 2>&1
 timeout /t 8 /nobreak >nul
-lighthouse_watchman_update.exe -s %serial_number% --target=application "C:\Program Files (x86)\Steam\steamapps\common\SteamVR\drivers\tundra_labs\resources\firmware\tracker\tundra-tracker_application_v1632556731.fw"
+lighthouse_watchman_update.exe -s %serial_number% --target=application "tundra-tracker_application_1637337510.fw"
 :: Local firmware version distributed by SteamVR.
 timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -bw3 >nul 2>&1
