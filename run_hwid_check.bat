@@ -76,6 +76,8 @@ for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
 @echo Device HWID is 0x%hwid_current%
 if %hwid_current% EQU 0 (@echo HWID could not be identified, quit for safety!)
 if %hwid_current% EQU 0 goto :stop
+if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% (@echo HWID of 0x%hwid_current% is not associated with Tundra Tracker, quit for safety!)
+if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% goto :stop
 if %hwid_current% EQU %product_id_required% (@echo This is the correct HWID for Tundra Tracker.)
 if %hwid_current% EQU %product_id_required% goto :hwid_is_safe
 if %hwid_current% EQU %product_id_check% (@echo This is an older HWID and should be updated.)
