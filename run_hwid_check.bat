@@ -1,8 +1,8 @@
 @echo off
-@echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script
-@echo This is version number 1.3 changed on Feb 8th 2022
+@echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
+@echo This is version number 1.3 changed on Feb 8th 2022.
 @echo.
-@echo This script can cause damage to SteamVR devices that are not Tundra Tracker
+@echo This script can cause damage to SteamVR devices that are not Tundra Tracker!
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
 @echo.
@@ -78,6 +78,8 @@ for /F "Tokens=1,3 delims= " %%A in (%version_cmd%) do (
 @echo Device HWID is 0x%hwid_current%
 if %hwid_current% EQU 0 (@echo HWID could not be identified, quit for safety!)
 if %hwid_current% EQU 0 goto :stop
+if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% (@echo HWID of 0x%hwid_current% is not associated with Tundra Tracker, quit for safety!)
+if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% goto :stop
 if %hwid_current% EQU %product_id_required% (@echo This is the correct HWID for Tundra Tracker.)
 if %hwid_current% EQU %product_id_required% goto :hwid_is_safe
 if %hwid_current% EQU %product_id_check% (@echo This is an older HWID and should be updated.)
@@ -147,8 +149,6 @@ goto :bad_hwid
 :update_hwid
 lighthouse_watchman_update.exe -Bw3 0xF1030009
 timeout /t 8 /nobreak >nul
-lighthouse_watchman_update.exe -bw3 >nul 2>&1
-timeout /t 8 /nobreak >nul
 :: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
 
@@ -168,9 +168,7 @@ goto :bad_fw_version
 lighthouse_watchman_update.exe -Rw3 >nul 2>&1
 timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -s %serial_number% --target=application "tundra-tracker_application_1637337510.fw"
-:: Local firmware version distributed by SteamVR.
-timeout /t 8 /nobreak >nul
-lighthouse_watchman_update.exe -bw3 >nul 2>&1
+:: Local firmware version.
 timeout /t 8 /nobreak >nul
 :: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
@@ -191,6 +189,7 @@ lighthouse_watchman_update.exe -Rw3 >nul 2>&1
 timeout /t 8 /nobreak >nul
 lighthouse_watchman_update.exe -s %serial_number% --hwid 0x%hwid_current% --target=bootloader watchman_v3_bootloader_umodule.fw
 timeout /t 8 /nobreak >nul
+:: Timeout of 8 or greater, mitigates issues with slow USB initialization.
 goto :check_compatibility
 
 :err
