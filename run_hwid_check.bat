@@ -12,11 +12,6 @@ set vdate=Feb 14th 2022
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
 @echo.
-if /I "%c%" EQU "Y" goto :get_time
-if /I "%c%" EQU "y" goto :get_time
-if /I "%c%" EQU "N" goto :stop
-if /I "%c%" EQU "n" goto :stop
-goto :stop
 
 :get_time
 for /F "Tokens=1 skip=1 delims=." %%A in ('wmic os get localdatetime') do (
@@ -24,15 +19,20 @@ for /F "Tokens=1 skip=1 delims=." %%A in ('wmic os get localdatetime') do (
 )
 set datetime=%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%
 set /a cycles=0
-goto :check_compatibility
+set logname=hwid_check_%datetime%_c1.log
+echo. >>%logname%
+
+if /I "%c%" EQU "Y" goto :check_compatibility
+if /I "%c%" EQU "y" goto :check_compatibility
+if /I "%c%" EQU "N" goto :stop
+if /I "%c%" EQU "n" goto :stop
+goto :stop
 
 :check_compatibility
 set /a cycles=cycles+1
 set /a nextcycle=cycles+1
-set logname=hwid_check_%datetime%_c%cycles%.log
 echo Created logfile on the %dt:~0,4%-%dt:~4,2%-%dt:~6,2% (MM-DD) at %dt:~8,2%:%dt:~10,2%:%dt:~12,2% for HWID check with version number %vnum% from %vdate%. >%logname%
 echo. Current device verification cycle is %cycles%. >>%logname%
-echo. >>%logname%
 
 @echo.
 @echo Do not unplug the device at any point!
