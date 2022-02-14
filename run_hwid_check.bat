@@ -17,22 +17,25 @@ for /F "Tokens=1 skip=1 delims=." %%A in ('wmic os get localdatetime') do (
   if not defined dt set dt=%%A
 )
 set datetime=%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%
-set /a cycles=0
 set logname=hwid_check_%datetime%_c1.log
 
+set overwr=false
 if /I "%c%" EQU "Y" goto :check_compatibility
 if /I "%c%" EQU "y" goto :check_compatibility
 if /I "%c%" EQU "N" goto :stop
 if /I "%c%" EQU "n" goto :stop
+if /I "%c%" EQU "OVER!WRITE_FIRM!WARE" @echo. Firmware verification check disabled! & set overwr=true & goto :check_compatibility
+:: DON'T USE THIS UNLESS YOU 100% KNOW WHAT YOU ARE DOING
 goto :stop
 
 :check_compatibility
+set /a cycles=0
 set /a cycles=cycles+1
 set /a nextcycle=cycles+1
 echo Created logfile on the %dt:~0,4%-%dt:~4,2%-%dt:~6,2% (MM-DD) at %dt:~8,2%:%dt:~10,2%:%dt:~12,2% for HWID check with version number %vnum% from %vdate%. >%logname%
 echo. Current device verification cycle is %cycles%. >>%logname%
 echo. >>%logname%
-
+if %overwr% EQU true echo. WARNING: Overwrite firmware flag set! >>%logname% & echo. >>%logname%
 @echo.
 @echo Do not unplug the device at any point!
 @echo.
@@ -75,7 +78,10 @@ if %active_devices% GTR 3 goto :err
 
 timeout /t 1 /nobreak >nul
 for /F "Tokens=1,3 delims= " %%A in (%version_csl%) do (
-  if "%%A" EQU "VRC" (set /a fw_version_current=%%B)
+  if "%%A" EQU "VRC" (
+    if %overwr% NEQ true set /a fw_version_current=%%B
+    if %overwr% EQU true set /a fw_version_current=01100001
+  )
 )
 echo Device firmware version is %fw_version_current%, expecting %fw_version_required% - needed. >>%logname%
 :: Check for firmware version.
