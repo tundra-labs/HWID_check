@@ -6,21 +6,19 @@ set vdate=Feb 14th 2022
 @echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
 @echo This is version number %vnum% changed on %vdate%.
 @echo.
-@echo This script can cause damage to SteamVR devices that are not Tundra Tracker!
-@echo.
 @echo A new log file is created after each device verification, these can be found in the same folder as this script.
+@echo.
+@echo This script can cause damage to SteamVR devices that are not Tundra Tracker!
 @echo.
 set /P c=Are you sure that only one Tundra tracker is connected to your PC and no other devices are connected? (y)es, (n)o: 
 @echo.
 
-:get_time
 for /F "Tokens=1 skip=1 delims=." %%A in ('wmic os get localdatetime') do (
   if not defined dt set dt=%%A
 )
 set datetime=%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%
 set /a cycles=0
 set logname=hwid_check_%datetime%_c1.log
-echo. >>%logname%
 
 if /I "%c%" EQU "Y" goto :check_compatibility
 if /I "%c%" EQU "y" goto :check_compatibility
@@ -33,6 +31,7 @@ set /a cycles=cycles+1
 set /a nextcycle=cycles+1
 echo Created logfile on the %dt:~0,4%-%dt:~4,2%-%dt:~6,2% (MM-DD) at %dt:~8,2%:%dt:~10,2%:%dt:~12,2% for HWID check with version number %vnum% from %vdate%. >%logname%
 echo. Current device verification cycle is %cycles%. >>%logname%
+echo. >>%logname%
 
 @echo.
 @echo Do not unplug the device at any point!
