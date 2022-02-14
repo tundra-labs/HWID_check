@@ -119,7 +119,7 @@ if %hwid_current% EQU %product_id_required% goto :hwid_is_safe
 if %hwid_current% EQU %product_id_check% (@echo This is an older HWID and should be updated. & echo Older HWID and should be updated. >>%logname%)
 if %hwid_current% EQU %product_id_check% goto :bad_hwid
 @echo.
-@echo HWID of 0x%hwid_current% is not associated with Tundra Tracker, quit for safety! & echo HWID of 0x%hwid_current% not associated with Tundra Tracker, quit! >>%logname%
+@echo HWID of 0x%hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of 0x%hwid_current% not associated with Tundra Tracker, quit! >>%logname%
 :: This catches all other possibilities.
 goto :stop
 
