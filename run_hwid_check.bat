@@ -219,7 +219,7 @@ echo. >>%logname%
 timeout /t 8 /nobreak >nul
 echo. >>%logname%
 echo. Executing firmware update >>%logname%
-lighthouse_watchman_update.exe -s %serial_number% --target=application "tundra-tracker_application_1637337510.fw" >>%logname% 2>&1
+lighthouse_watchman_update.exe -s %serial_number% --target=application tundra-tracker_application_1637337510.fw >>%logname% 2>&1
 :: Local firmware version.
 @echo. ... Saved info to log file ...
 echo. >>%logname%
