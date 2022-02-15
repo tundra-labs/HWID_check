@@ -38,6 +38,7 @@ set product_id_check=0xf0000109
 set product_id_required=0xf1030009
 
 set /a fw_version_current=0
+set /a fw_version_buffer=0
 set /a fw_version_required=1637337510
 
 set /a rad_version_current=0
@@ -96,15 +97,21 @@ for /F "Tokens=1,2,9 skip=14 delims=:, " %%A in (%version_csl%) do (
 for /F "Tokens=1,3 skip=14 delims= " %%A in (%version_csl%) do (
   if "%%A" EQU "Hardware" (set hwid_current=%%B)
   if "%%A" EQU "VRC" (
-    if %overwr% NEQ true (set /a fw_version_current=%%B)
-    if %overwr% EQU true (set /a fw_version_current=01100001)
+    if %overwr% NEQ true (
+	set /a fw_version_current=%%B
+	set /a fw_version_buffer=%%B
+	)
+    if %overwr% EQU true (
+	set /a fw_version_current=01100001
+	set /a fw_version_buffer=%%B
+	)
   )
   if "%%A" EQU "Radio" (set rad_version_current=%%B)
 )
 
 echo+ >>%logname%
 echo Device HWID is %hwid_current%,                expecting %product_id_required% - new or %product_id_check% - old. >>%logname%
-echo Device firmware version is v%fw_version_current%,   expecting v%fw_version_required% - needed. >>%logname%
+echo Device firmware version is v%fw_version_buffer%,   expecting v%fw_version_required% - needed. >>%logname%
 echo Device bootloader version is v%bl_version_current%, expecting v%bl_version_required% - new. >>%logname%
 echo Device radio version is v%rad_version_current%,      expecting v%rad_version_required% - new. >>%logname%
 timeout /t 1 /nobreak >nul
@@ -133,7 +140,7 @@ goto :stop
 
 :hwid_is_safe
 @echo+
-@echo Device firmware version is v%fw_version_current%.
+@echo Device firmware version is v%fw_version_buffer%.
 if %fw_version_current% EQU 0 (@echo Firmware version could not be identified, quit for safety! & echo ERROR: Firmware version could not be identified, quit! >>%logname%)
 if %fw_version_current% EQU 0 goto :stop
 if %fw_version_current% EQU %fw_version_required% (@echo This is the correct firmware version for Tundra Tracker. & echo Correct firmware version for Tundra Tracker. >>%logname%) 
@@ -341,7 +348,7 @@ Exit /b
 echo+ >>%logname%
 @echo+
 echo+ >>%logname%
-@echo Device is now safe to unplug! & echo Device safe to unplug. >>%logname%
+@echo Device is now safe to unplug, please replug the device before rerunning the script! & echo Device safe to unplug. >>%logname%
 set /P c=Press Enter to quit...
 echo+ >>%logname%
 echo+ Logging finished. >>%logname%
