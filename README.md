@@ -13,7 +13,7 @@ This includes HMDs, Controllers, etc.
 # How to use this tool:
 
 1) Download the .zip file from github
-2) Extract the zip file to you pc
+2) Extract the zip file to your pc
 3) Double click the `run_hwid_check.bat`
 4) Follow On screen instructions
 
