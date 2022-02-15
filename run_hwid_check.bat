@@ -312,12 +312,12 @@ echo+ >>%logname%
 @echo -- Updating radio -- & echo -- Updating radio -- >>%logname%
 @echo+
 echo+ >>%logname%
-echo+ Executing bootloader update >>%logname%
+echo+ Executing radio update >>%logname%
 lighthouse_watchman_update.exe -s %serial_number% --hwid %hwid_current% --target=default nrf52_20210924v1632527453.fw >>%logname% 2>&1
 @echo+ ... Saved info to log file ...
 @echo+
 echo+ >>%logname%
-timeout /t 8 /nobreak >nul
+timeout /t 4 /nobreak >nul
 @echo -- Updating radio done -- & echo -- Updating radio done-- >>%logname%
 @echo+
 echo+ >>%logname%
