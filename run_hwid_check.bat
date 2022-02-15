@@ -16,10 +16,11 @@ set /P c=Are you sure that only one Tundra tracker is connected to your PC and n
 for /F "Tokens=1 skip=1 delims=." %%A in ('wmic os get localdatetime') do (
   if not defined dt set dt=%%A
 )
-set datetime=%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%
-set logname=hwid_check_%datetime%_c1.log
 
+set logname=name
 set overwr=false
+set /a cycles=0
+
 if /I "%c%" EQU "Y" goto :check_compatibility
 if /I "%c%" EQU "y" goto :check_compatibility
 if /I "%c%" EQU "N" goto :stop
@@ -29,9 +30,9 @@ if /I "%c%" EQU "OVER!WRITE_FIRM!WARE" @echo. Firmware verification check disabl
 goto :stop
 
 :check_compatibility
-set /a cycles=0
 set /a cycles=cycles+1
 set /a nextcycle=cycles+1
+set logname=hwid_check_%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%_c%cycles%.log
 echo Created logfile on the %dt:~0,4%-%dt:~4,2%-%dt:~6,2% (MM-DD) at %dt:~8,2%:%dt:~10,2%:%dt:~12,2% for HWID check with version number %vnum% from %vdate%. >%logname%
 echo. Current device verification cycle is %cycles%. >>%logname%
 echo. >>%logname%
