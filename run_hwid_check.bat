@@ -30,7 +30,7 @@ set serial_number=unknown
 
 set /a bl_version_current=0
 :: set /a bl_version_check=1622649182 REMOVED CHECK FOR SPECIFIC VERSION NEEDS ADJUSTEMNT IN CODE
-set /a bl_version_required=1637337510
+set /a bl_version_required=1629157907
 :: Newer bootloader version of 1637337510 available?
 
 set hwid_current=0x0
