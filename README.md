@@ -1,4 +1,4 @@
-# Tundra Tracker HWID and Bootloader Check
+# Tundra Tracker HWID and bootloader check
 
 Some Kickstarter backers have received Tundra Trackers that have the incorrect Hardware ID and/or bootloader firmware revision.  This package is intended to look for these issues and repair if the user accepts the changes.
 
@@ -12,12 +12,12 @@ This includes HMDs, Controllers, etc.
 
 # How to use this tool:
 
-1) Download the .zip file from github
-2) Extract the zip file to your pc
+1) Download the .zip file from GitHub
+2) Extract the .zip file to your PC
 3) Double click the `run_hwid_check.bat`
-4) Follow On screen instructions
+4) Follow on-screen instructions
 
 
 
-Any questions, please talk on forum.tundra-labs.com
+Any questions, please talk on [forum.tundra-labs.com](https://forum.tundra-labs.com/).
 
