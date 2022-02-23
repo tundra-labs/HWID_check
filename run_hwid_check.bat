@@ -1,7 +1,7 @@
 @echo off
 
-set vnum=1.5
-set vdate=Feb 15th 2022
+set vnum=1.6
+set vdate=Feb 23rd 2022
 
 @echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
 @echo This is version number %vnum% changed on %vdate%.
@@ -44,11 +44,11 @@ set /a fw_version_required=1637337510
 set /a rad_version_current=0
 set /a rad_version_required=1632527453
 
-if /I "%c%" EQU "Y" goto :check_compatibility
-if /I "%c%" EQU "y" goto :check_compatibility
-if /I "%c%" EQU "N" goto :stop
-if /I "%c%" EQU "n" goto :stop
-if /I "%c%" EQU "OVER!WRITE_FIRM!WARE" @echo+ Firmware verification check disabled! & set overwr=true & goto :check_compatibility
+if /I "%c%" == "Y" goto :check_compatibility
+if /I "%c%" == "y" goto :check_compatibility
+if /I "%c%" == "N" goto :stop
+if /I "%c%" == "n" goto :stop
+if /I "%c%" == "OVER!WRITE_FIRM!WARE" @echo+ Firmware verification check disabled! & set overwr=true & goto :check_compatibility
 :: DON'T USE THIS UNLESS YOU 100% KNOW WHAT YOU ARE DOING
 goto :stop
 
@@ -60,7 +60,7 @@ echo Created logfile on the %dt:~0,4%-%dt:~4,2%-%dt:~6,2% (MM-DD) at %dt:~8,2%:%
 echo+ Current device verification cycle is %cycles%. >>%logname%
 @echo+
 echo+ >>%logname%
-if %overwr% EQU true echo+ WARNING: Overwrite firmware flag set! >>%logname%
+if %overwr% == true echo+ WARNING: Overwrite firmware flag set! >>%logname%
 
 @echo+
 @echo Do not unplug the device at any point!
@@ -68,7 +68,7 @@ if %overwr% EQU true echo+ WARNING: Overwrite firmware flag set! >>%logname%
 @echo Verifying device data, please wait...
 
 for /F "Tokens=1,5 delims= " %%A in (%version_csl%) do (
-  if "%%A" EQU "Attached" (set /a active_devices=%%B)
+  if "%%A" == "Attached" (set /a active_devices=%%B)
 )
 echo+ >>%logname%
 echo Active devices check resulted in: %active_devices% - expecting 3. >>%logname%
@@ -76,8 +76,8 @@ echo+ >>%logname%
 timeout /t 1 /nobreak >nul
 
 @echo+
-if %active_devices% EQU 0 (@echo Could not find any active devices! & echo ERROR: Could not find any active devices! >>%logname%)
-if %active_devices% EQU 0 goto :err
+if %active_devices% == 0 (@echo Could not find any active devices! & echo ERROR: Could not find any active devices! >>%logname%)
+if %active_devices% == 0 goto :err
 if %active_devices% LSS 3 (@echo Wrong device connected? & echo ERROR: Wrong device connected? >>%logname%)
 if %active_devices% LSS 3 goto :err
 if %active_devices% GTR 3 (@echo Too many devices or dongle connected? & echo ERROR: Too many devices or dongle connected? >>%logname%)
@@ -85,28 +85,28 @@ if %active_devices% GTR 3 goto :err
 :: Tries to catch if no device, the wrong device or too many devices are plugged in.
 
 for /F "Tokens=1,2 skip=10 delims=-:," %%A in (%version_csl%) do (
-  if "%%A" EQU "LHR" (set serial_number=LHR-%%B)
+  if "%%A" == "LHR" (set serial_number=LHR-%%B)
 )
 echo+ >>%logname%
 echo+ Device serial number is %serial_number%. >>%logname%
 
 for /F "Tokens=1,2,9 skip=14 delims=:, " %%A in (%version_csl%) do (
-  if "%%A" EQU "Watchman" if "%%B" EQU "Version" (set /a bl_version_current=%%C)
+  if "%%A" == "Watchman" if "%%B" == "Version" (set /a bl_version_current=%%C)
 )
 
 for /F "Tokens=1,3 skip=14 delims= " %%A in (%version_csl%) do (
-  if "%%A" EQU "Hardware" (set hwid_current=%%B)
-  if "%%A" EQU "VRC" (
-    if %overwr% NEQ true (
-	set /a fw_version_current=%%B
-	set /a fw_version_buffer=%%B
-	)
-    if %overwr% EQU true (
-	set /a fw_version_current=01100001
-	set /a fw_version_buffer=%%B
-	)
+  if "%%A" == "Hardware" (set hwid_current=%%B)
+  if "%%A" == "VRC" (
+    if not %overwr% == true (
+	    set /a fw_version_current=%%B
+	    set /a fw_version_buffer=%%B
+    )
+    if %overwr% == true (
+	    set /a fw_version_current=01100001
+	    set /a fw_version_buffer=%%B
+    )
   )
-  if "%%A" EQU "Radio" (set rad_version_current=%%B)
+  if "%%A" == "Radio" (set rad_version_current=%%B)
 )
 
 echo+ >>%logname%
@@ -125,15 +125,14 @@ echo+ >>%logname%
 
 @echo+
 @echo Device HWID is %hwid_current%.
-if %hwid_current% EQU 0x0 (@echo HWID could not be identified, quit for safety! & echo ERROR: HWID could not be identified, quit! >>%logname%)
-if %hwid_current% EQU 0x0 goto :stop
-if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% (@echo HWID of %hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of %hwid_current% not associated with Tundra Tracker, quit! >>%logname%)
-if %hwid_current% NEQ %product_id_check% if %hwid_current% NEQ %product_id_required% goto :stop
-if %hwid_current% EQU %product_id_required% (@echo This is the correct HWID for Tundra Tracker. & echo Correct HWID for Tundra Tracker. >>%logname%)
-if %hwid_current% EQU %product_id_required% goto :hwid_is_safe
-if %hwid_current% EQU %product_id_check% (@echo This is an older HWID and should be updated. & echo Older HWID and should be updated. >>%logname%)
-if %hwid_current% EQU %product_id_check% goto :bad_hwid
-@echo+
+if %hwid_current% == 0x0 (@echo HWID could not be identified, quit for safety! & echo ERROR: HWID could not be identified, quit! >>%logname%)
+if %hwid_current% == 0x0 goto :stop
+if not %hwid_current% == %product_id_check% if not %hwid_current% == %product_id_required% (@echo HWID of %hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of %hwid_current% not associated with Tundra Tracker, quit! >>%logname%)
+if not %hwid_current% == %product_id_check% if not %hwid_current% == %product_id_required% goto :stop
+if %hwid_current% == %product_id_required% (@echo This is the correct HWID for Tundra Tracker. & echo Correct HWID for Tundra Tracker. >>%logname%)
+if %hwid_current% == %product_id_required% goto :hwid_is_safe
+if %hwid_current% == %product_id_check% (@echo This is an older HWID and should be updated. & echo Older HWID and should be updated. >>%logname%)
+if %hwid_current% == %product_id_check% goto :bad_hwid
 @echo HWID of %hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of %hwid_current% not associated with Tundra Tracker, quit! >>%logname%
 :: This catches all other possibilities.
 goto :stop
@@ -141,10 +140,10 @@ goto :stop
 :hwid_is_safe
 @echo+
 @echo Device firmware version is v%fw_version_buffer%.
-if %fw_version_current% EQU 0 (@echo Firmware version could not be identified, quit for safety! & echo ERROR: Firmware version could not be identified, quit! >>%logname%)
-if %fw_version_current% EQU 0 goto :stop
-if %fw_version_current% EQU %fw_version_required% (@echo This is the correct firmware version for Tundra Tracker. & echo Correct firmware version for Tundra Tracker. >>%logname%) 
-:: Change 'EQU' to 'GEQ' if a newer version is not a issue and remove line further below.
+if %fw_version_current% == 0 (@echo Firmware version could not be identified, quit for safety! & echo ERROR: Firmware version could not be identified, quit! >>%logname%)
+if %fw_version_current% == 0 goto :stop
+if %fw_version_current% == %fw_version_required% (@echo This is the correct firmware version for Tundra Tracker. & echo Correct firmware version for Tundra Tracker. >>%logname%) 
+:: Change '==' to 'GEQ' if a newer version is not a issue and remove line further below.
 if %fw_version_current% LSS %fw_version_required% (@echo This is a older firmware version for Tundra Tracker. & echo Older firmware version for Tundra Tracker. >>%logname%)
 if %fw_version_current% LSS %fw_version_required% goto :bad_fw_version
 if %fw_version_current% GTR %fw_version_required% (@echo This is a newer than expected firmware version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected firmware version for Tundra Tracker, quit! >>%logname%) 
@@ -154,14 +153,14 @@ if %fw_version_current% GTR %fw_version_required% goto :stop
 
 @echo+
 @echo Device bootloader version is v%bl_version_current%.
-if %bl_version_current% EQU 0 (@echo Bootloader version could not be identified, quit for safety! & echo ERROR: Bootloader version could not be identified, quit! >>%logname%)
-if %bl_version_current% EQU 0 goto :stop
-if %bl_version_current% EQU %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker. & echo Correct bootloader version for Tundra Tracker. >>%logname%)
-::if %bl_version_current% EQU %bl_version_required% goto :stop
+if %bl_version_current% == 0 (@echo Bootloader version could not be identified, quit for safety! & echo ERROR: Bootloader version could not be identified, quit! >>%logname%)
+if %bl_version_current% == 0 goto :stop
+if %bl_version_current% == %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker. & echo Correct bootloader version for Tundra Tracker. >>%logname%)
+::if %bl_version_current% == %bl_version_required% goto :stop
 if %bl_version_current% LSS %bl_version_required% (@echo This is a older bootloader version for Tundra Tracker. & echo Older bootloader version for Tundra Tracker. >>%logname%) 
-:: Change 'EQU' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
+:: Change '==' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
 if %bl_version_current% LSS %bl_version_required% goto :bad_bl_version
-:: Change 'EQU' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
+:: Change '==' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
 if %bl_version_current% GTR %bl_version_required% (@echo This is a newer than expected bootloader version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected bootloader version for Tundra Tracker, quit! >>%logname%)
 if %bl_version_current% GTR %bl_version_required% goto :stop
 ::if %bl_version_current% LSS %bl_version_required% (@echo This is a unexpected bootloader version for Tundra Tracker, quit for safety! & echo WARNING: Unexpected bootloader version for Tundra Tracker, quit! >>%logname%) 
@@ -171,20 +170,22 @@ if %bl_version_current% GTR %bl_version_required% goto :stop
 
 @echo+
 @echo Device radio version is v%rad_version_current%.
-::if %rad_version_current% EQU 0 (@echo Radio version could not be identified, quit for safety! & echo ERROR: Radio version could not be identified, quit! >>%logname%) RADIO VERSIONS ARE REPORTING 0?
-::if %rad_version_current% EQU 0 goto :stop RADIO VERSIONS ARE REPORTING 0?
-if %rad_version_current% EQU %rad_version_required% (@echo This is the correct radio version for Tundra Tracker. & echo Correct radio version for Tundra Tracker. >>%logname%)
-if %rad_version_current% EQU %rad_version_required% goto :stop
+::if %rad_version_current% == 0 (@echo Radio version could not be identified, quit for safety! & echo ERROR: Radio version could not be identified, quit! >>%logname%) RADIO VERSIONS ARE REPORTING 0?
+::if %rad_version_current% == 0 goto :stop RADIO VERSIONS ARE REPORTING 0?
+if %rad_version_current% == %rad_version_required% (@echo This is the correct radio version for Tundra Tracker. & echo Correct radio version for Tundra Tracker. >>%logname%)
+if %rad_version_current% == %rad_version_required% goto :stop
 if %rad_version_current% LSS %rad_version_required% (@echo This is a older radio version for Tundra Tracker. & echo Older radio version for Tundra Tracker. >>%logname%) 
-:: Change 'EQU' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
+:: Change '==' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
 if %rad_version_current% LSS %rad_version_required% goto :bad_rad_version
-:: Change 'EQU' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
+:: Change '==' to 'LSS' to update all older bootloaders and remove line further below. CHANGED
 if %rad_version_current% GTR %rad_version_required% (@echo This is a newer than expected radio version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected radio version for Tundra Tracker, quit! >>%logname%)
 if %rad_version_current% GTR %rad_version_required% goto :stop
 ::if %rad_version_current% LSS %rad_version_required% (@echo This is a unexpected radio version for Tundra Tracker, quit for safety! & echo WARNING: Unexpected radio version for Tundra Tracker, quit! >>%logname%) 
 :: Remove ^ line when updating all older bootloaders.
 ::if %rad_version_current% LSS %rad_version_required% goto :stop
 :: Remove ^ line when updating all older bootloaders.
+echo Script failed, please notify the creator! >>%logname%
+@echo Script failed, please notify the creator!
 echo+ >>%logname%
 @echo+
 goto :stop
@@ -217,10 +218,10 @@ goto :stop
 @echo+
 set /P c=HWID needs to be updated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" EQU "Y" goto :update_hwid
-if /I "%c%" EQU "y" goto :update_hwid
-if /I "%c%" EQU "N" goto :err_hw_check
-if /I "%c%" EQU "n" goto :err_hw_check
+if /I "%c%" == "Y" goto :update_hwid
+if /I "%c%" == "y" goto :update_hwid
+if /I "%c%" == "N" goto :err_hw_check
+if /I "%c%" == "n" goto :err_hw_check
 goto :bad_hwid
 
 :update_hwid
@@ -251,10 +252,10 @@ goto :check_compatibility
 set overwr=false
 set /P c=Firmware version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" EQU "Y" goto :update_fw
-if /I "%c%" EQU "y" goto :update_fw
-if /I "%c%" EQU "N" goto :err_fw_check
-if /I "%c%" EQU "n" goto :err_fw_check
+if /I "%c%" == "Y" goto :update_fw
+if /I "%c%" == "y" goto :update_fw
+if /I "%c%" == "N" goto :err_fw_check
+if /I "%c%" == "n" goto :err_fw_check
 goto :bad_fw_version
 
 :update_fw
@@ -279,10 +280,10 @@ goto :check_compatibility
 @echo+
 set /P c=Bootloader version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" EQU "Y" goto :update_bl
-if /I "%c%" EQU "y" goto :update_bl
-if /I "%c%" EQU "N" goto :err_bl_check
-if /I "%c%" EQU "n" goto :err_bl_check
+if /I "%c%" == "Y" goto :update_bl
+if /I "%c%" == "y" goto :update_bl
+if /I "%c%" == "N" goto :err_bl_check
+if /I "%c%" == "n" goto :err_bl_check
 goto :bad_bl_version
 
 :update_bl
@@ -307,10 +308,10 @@ goto :check_compatibility
 @echo+
 set /P c=Radio version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" EQU "Y" goto :update_rad
-if /I "%c%" EQU "y" goto :update_rad
-if /I "%c%" EQU "N" goto :err_rad_check
-if /I "%c%" EQU "n" goto :err_rad_check
+if /I "%c%" == "Y" goto :update_rad
+if /I "%c%" == "y" goto :update_rad
+if /I "%c%" == "N" goto :err_rad_check
+if /I "%c%" == "n" goto :err_rad_check
 goto :bad_rad_version
 
 :update_rad
