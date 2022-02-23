@@ -44,9 +44,7 @@ set /a fw_version_required=1637337510
 set /a rad_version_current=0
 set /a rad_version_required=1632527453
 
-if /I "%c%" == "Y" goto :check_compatibility
 if /I "%c%" == "y" goto :check_compatibility
-if /I "%c%" == "N" goto :stop
 if /I "%c%" == "n" goto :stop
 if /I "%c%" == "OVER!WRITE_FIRM!WARE" @echo+ Firmware verification check disabled! & set overwr=true & goto :check_compatibility
 :: DON'T USE THIS UNLESS YOU 100% KNOW WHAT YOU ARE DOING
@@ -218,9 +216,7 @@ goto :stop
 @echo+
 set /P c=HWID needs to be updated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" == "Y" goto :update_hwid
 if /I "%c%" == "y" goto :update_hwid
-if /I "%c%" == "N" goto :err_hw_check
 if /I "%c%" == "n" goto :err_hw_check
 goto :bad_hwid
 
@@ -252,9 +248,7 @@ goto :check_compatibility
 set overwr=false
 set /P c=Firmware version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" == "Y" goto :update_fw
 if /I "%c%" == "y" goto :update_fw
-if /I "%c%" == "N" goto :err_fw_check
 if /I "%c%" == "n" goto :err_fw_check
 goto :bad_fw_version
 
@@ -280,9 +274,7 @@ goto :check_compatibility
 @echo+
 set /P c=Bootloader version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" == "Y" goto :update_bl
 if /I "%c%" == "y" goto :update_bl
-if /I "%c%" == "N" goto :err_bl_check
 if /I "%c%" == "n" goto :err_bl_check
 goto :bad_bl_version
 
@@ -308,9 +300,7 @@ goto :check_compatibility
 @echo+
 set /P c=Radio version is outdated, would you like to update? (y)es, (n)o: 
 @echo+
-if /I "%c%" == "Y" goto :update_rad
 if /I "%c%" == "y" goto :update_rad
-if /I "%c%" == "N" goto :err_rad_check
 if /I "%c%" == "n" goto :err_rad_check
 goto :bad_rad_version
 
