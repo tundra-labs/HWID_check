@@ -31,7 +31,6 @@ set serial_number=unknown
 set /a bl_version_current=0
 :: set /a bl_version_check=1622649182 REMOVED CHECK FOR SPECIFIC VERSION NEEDS ADJUSTEMNT IN CODE
 set /a bl_version_required=1637337510
-:: Newer bootloader version of 1637337510 available?
 
 set hwid_current=0x0
 set product_id_check=0xf0000109
@@ -73,7 +72,7 @@ for /F "Tokens=1,5 delims= " %%A in (%version_csl%) do (
   if "%%A" == "Attached" (set /a active_devices=%%B)
 )
 echo+ >>%logname%
-echo Active devices check resulted in: %active_devices% - expecting 3. >>%logname%
+echo Active devices check resulted in: "%active_devices%" - expecting 3. >>%logname%
 echo+ >>%logname%
 timeout /t 1 /nobreak >nul
 
@@ -90,7 +89,7 @@ for /F "Tokens=1,2 skip=10 delims=-:," %%A in (%version_csl%) do (
   if "%%A" == "LHR" (set serial_number=LHR-%%B)
 )
 echo+ >>%logname%
-echo+ Device serial number is %serial_number%. >>%logname%
+echo+ Device serial number is "%serial_number%". >>%logname%
 
 for /F "Tokens=1,2,7 skip=14 delims=:, " %%A in (%version_csl%) do (
   if "%%A" == "Watchman" if "%%B" == "Version" (set "fpga_version_current=%%C")
