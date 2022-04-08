@@ -44,6 +44,10 @@ set /a fw_version_required=1637337510
 set /a rad_version_current=0
 set /a rad_version_required=1632527453
 
+set "fpga_version_current=0(0)"
+set "fpga_version_required=538(2.26/7/2)"
+set "fpga_version_missing=0(0.0/255/15)"
+
 if /I "%c%" == "y" goto :check_compatibility
 if /I "%c%" == "n" goto :stop
 if /I "%c%" == "OVER!WRITE_FIRM!WARE" @echo+ Firmware verification check disabled! & set overwr=true & goto :check_compatibility
@@ -88,6 +92,10 @@ for /F "Tokens=1,2 skip=10 delims=-:," %%A in (%version_csl%) do (
 echo+ >>%logname%
 echo+ Device serial number is %serial_number%. >>%logname%
 
+for /F "Tokens=1,2,7 skip=14 delims=:, " %%A in (%version_csl%) do (
+  if "%%A" == "Watchman" if "%%B" == "Version" (set "fpga_version_current=%%C")
+)
+
 for /F "Tokens=1,2,9 skip=14 delims=:, " %%A in (%version_csl%) do (
   if "%%A" == "Watchman" if "%%B" == "Version" (set /a bl_version_current=%%C)
 )
@@ -107,11 +115,14 @@ for /F "Tokens=1,3 skip=14 delims= " %%A in (%version_csl%) do (
   if "%%A" == "Radio" (set rad_version_current=%%B)
 )
 
+
 echo+ >>%logname%
-echo Device HWID is %hwid_current%,                expecting %product_id_required% - new or %product_id_check% - old. >>%logname%
-echo Device firmware version is v%fw_version_buffer%,   expecting v%fw_version_required% - needed. >>%logname%
-echo Device bootloader version is v%bl_version_current%, expecting v%bl_version_required% - new. >>%logname%
-echo Device radio version is v%rad_version_current%,      expecting v%rad_version_required% - new. >>%logname%
+echo Device HWID is "%hwid_current%",                expecting "%product_id_required%" - new or "%product_id_check%" - old. >>%logname%
+echo Device FPGA version is "%fpga_version_current%",     expecting "%fpga_version_required%" - needed. >>%logname%
+echo Device firmware version is "v%fw_version_buffer%",   expecting "v%fw_version_required%" - needed. >>%logname%
+echo Device bootloader version is "v%bl_version_current%", expecting "v%bl_version_required%" - new. >>%logname%
+echo Device radio version is "v%rad_version_current%",      expecting "v%rad_version_required%" - new. >>%logname%
+
 timeout /t 1 /nobreak >nul
 
 echo+ >>%logname%
@@ -119,25 +130,39 @@ echo+ >>%logname%
 @echo -- Device status --
 
 @echo+
-@echo Device serial number is %serial_number%.
+@echo Device serial number is "%serial_number%".
 
 @echo+
-@echo Device HWID is %hwid_current%.
+@echo Device HWID is "%hwid_current%".
 if %hwid_current% == 0x0 (@echo HWID could not be identified, quit for safety! & echo ERROR: HWID could not be identified, quit! >>%logname%)
 if %hwid_current% == 0x0 goto :stop
-if not %hwid_current% == %product_id_check% if not %hwid_current% == %product_id_required% (@echo HWID of %hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of %hwid_current% not associated with Tundra Tracker, quit! >>%logname%)
+if not %hwid_current% == %product_id_check% if not %hwid_current% == %product_id_required% (@echo HWID of "%hwid_current%" is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of "%hwid_current%" not associated with Tundra Tracker, quit! >>%logname%)
 if not %hwid_current% == %product_id_check% if not %hwid_current% == %product_id_required% goto :stop
 if %hwid_current% == %product_id_required% (@echo This is the correct HWID for Tundra Tracker. & echo Correct HWID for Tundra Tracker. >>%logname%)
 if %hwid_current% == %product_id_required% goto :hwid_is_safe
 if %hwid_current% == %product_id_check% (@echo This is an older HWID and should be updated. & echo Older HWID and should be updated. >>%logname%)
 if %hwid_current% == %product_id_check% goto :bad_hwid
-@echo HWID of %hwid_current% is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of %hwid_current% not associated with Tundra Tracker, quit! >>%logname%
+@echo HWID of "%hwid_current%" is not associated with Tundra Tracker, quit for safety! & echo WARNING: HWID of "%hwid_current%" not associated with Tundra Tracker, quit! "(Script end)" >>%logname%
 :: This catches all other possibilities.
 goto :stop
 
 :hwid_is_safe
+
 @echo+
-@echo Device firmware version is v%fw_version_buffer%.
+@echo Device FPGA version is "%fpga_version_current%".
+if "%fpga_version_current%" == "%fpga_version_missing%" (@echo The FPGA version could not be identified, quit for safety! Please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! & echo ERROR: FPGA version could not be identified, quit! >>%logname%)
+if "%fpga_version_current%" == "%fpga_version_missing%" goto :stop
+if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_version_current%" == "%fpga_version_required%" (@echo Unexpected FPGA version identified, quit for safety! Please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! & echo WARNING: Unexpected FPGA version of "%fpga_version_current%", quit! >>%logname%)
+if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_version_current%" == "%fpga_version_required%" goto :stop
+if "%fpga_version_current%" == "%fpga_version_required%" (@echo This is the correct FPGA version for Tundra Tracker. & echo Correct FPGA version for Tundra Tracker. >>%logname%)
+if "%fpga_version_current%" == "%fpga_version_required%" goto :fpga_is_safe
+@echo The FPGA version could not be identified, quit for safety! Please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! & echo WRANING: FPGA version could not be identified, quit! "(Script end)" >>%logname%)
+goto :stop
+
+:fpga_is_safe
+
+@echo+
+@echo Device firmware version is "v%fw_version_buffer%".
 if %fw_version_current% == 0 (@echo Firmware version could not be identified, quit for safety! & echo ERROR: Firmware version could not be identified, quit! >>%logname%)
 if %fw_version_current% == 0 goto :stop
 if %fw_version_current% == %fw_version_required% (@echo This is the correct firmware version for Tundra Tracker. & echo Correct firmware version for Tundra Tracker. >>%logname%) 
@@ -150,7 +175,7 @@ if %fw_version_current% GTR %fw_version_required% goto :stop
 :: Remove ^ line if this is not a problem, added to catch unexpected behaviour.
 
 @echo+
-@echo Device bootloader version is v%bl_version_current%.
+@echo Device bootloader version is "v%bl_version_current%".
 if %bl_version_current% == 0 (@echo Bootloader version could not be identified, quit for safety! & echo ERROR: Bootloader version could not be identified, quit! >>%logname%)
 if %bl_version_current% == 0 goto :stop
 if %bl_version_current% == %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker. & echo Correct bootloader version for Tundra Tracker. >>%logname%)
@@ -167,7 +192,7 @@ if %bl_version_current% GTR %bl_version_required% goto :stop
 :: Remove ^ line when updating all older bootloaders.
 
 @echo+
-@echo Device radio version is v%rad_version_current%.
+@echo Device radio version is "v%rad_version_current%".
 ::if %rad_version_current% == 0 (@echo Radio version could not be identified, quit for safety! & echo ERROR: Radio version could not be identified, quit! >>%logname%) RADIO VERSIONS ARE REPORTING 0?
 ::if %rad_version_current% == 0 goto :stop RADIO VERSIONS ARE REPORTING 0?
 if %rad_version_current% == %rad_version_required% (@echo This is the correct radio version for Tundra Tracker. & echo Correct radio version for Tundra Tracker. >>%logname%)
@@ -182,8 +207,8 @@ if %rad_version_current% GTR %rad_version_required% goto :stop
 :: Remove ^ line when updating all older bootloaders.
 ::if %rad_version_current% LSS %rad_version_required% goto :stop
 :: Remove ^ line when updating all older bootloaders.
-echo Script failed, please notify the creator! >>%logname%
-@echo Script failed, please notify the creator!
+echo Script failed, please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! >>%logname%
+@echo Script failed, please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'!
 echo+ >>%logname%
 @echo+
 goto :stop
