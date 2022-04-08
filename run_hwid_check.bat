@@ -1,7 +1,7 @@
 @echo off
 
-set vnum=1.6
-set vdate=Feb 23rd 2022
+set vnum=1.7
+set vdate=April 8th 2022
 
 @echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
 @echo This is version number %vnum% changed on %vdate%.
@@ -72,7 +72,7 @@ for /F "Tokens=1,5 delims= " %%A in (%version_csl%) do (
   if "%%A" == "Attached" (set /a active_devices=%%B)
 )
 echo+ >>%logname%
-echo Active devices check resulted in: "%active_devices%" - expecting 3. >>%logname%
+echo Active devices check resulted in: "%active_devices%" - expecting "3". >>%logname%
 echo+ >>%logname%
 timeout /t 1 /nobreak >nul
 
