@@ -225,6 +225,7 @@ set /P c=HWID needs to be updated, would you like to update? (y)es, (n)o:
 @echo+
 if /I "%c%" == "y" goto :update_hwid
 if /I "%c%" == "n" goto :err_hw_check
+goto :bad_hwid
 
 :update_hwid
 @echo+
