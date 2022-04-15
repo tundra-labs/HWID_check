@@ -154,7 +154,7 @@ if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_versio
 if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_version_current%" == "%fpga_version_required%" goto :stop
 if "%fpga_version_current%" == "%fpga_version_required%" (@echo This is the correct FPGA version for Tundra Tracker. & echo Correct FPGA version for Tundra Tracker. >>%logname%)
 if "%fpga_version_current%" == "%fpga_version_required%" goto :fpga_is_safe
-if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" (@echo This is the correct FPGA version for Tundra Tracker. & echo Correct FPGA version for Tundra Tracker. >>%logname%)
+if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" (@echo This is an older FPGA version for Tundra Tracker. & echo Older FPGA version for Tundra Tracker. >>%logname%)
 if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" (set fpga_up=true)
 if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" goto :fpga_is_safe
 @echo The FPGA version could not be identified, quit for safety! Please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! & echo WRANING: FPGA version could not be identified, quit! "(Script end)" >>%logname%)
@@ -166,7 +166,7 @@ goto :stop
 if %fw_version_current% == 0 (@echo Firmware version could not be identified, quit for safety! & echo ERROR: Firmware version could not be identified, quit! >>%logname%)
 if %fw_version_current% == 0 goto :stop
 if %fw_version_current% == %fw_version_required% (@echo This is the correct firmware version for Tundra Tracker. & echo Correct firmware version for Tundra Tracker. >>%logname%) 
-if %fw_version_current% LSS %fw_version_required% (@echo This is a older firmware version for Tundra Tracker. & echo Older firmware version for Tundra Tracker. >>%logname%)
+if %fw_version_current% LSS %fw_version_required% (@echo This is an older firmware version for Tundra Tracker. & echo Older firmware version for Tundra Tracker. >>%logname%)
 if %fw_version_current% LSS %fw_version_required% goto :bad_fw_version
 if %fw_version_current% GTR %fw_version_required% (@echo This is a newer than expected firmware version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected firmware version for Tundra Tracker, quit! >>%logname%) 
 if %fw_version_current% GTR %fw_version_required% goto :stop
@@ -177,7 +177,7 @@ if %bl_version_current% == 0 (@echo Bootloader version could not be identified, 
 if %bl_version_current% == 0 goto :stop
 if %bl_version_current% == %bl_version_required% (@echo This is the correct bootloader version for Tundra Tracker. & echo Correct bootloader version for Tundra Tracker. >>%logname%)
 if %bl_version_current% == %bl_version_required% if not %hwid_ok% == true if %hwid_ok% == false goto :bootloader_ok
-if %bl_version_current% LSS %bl_version_required% (@echo This is a older bootloader version for Tundra Tracker. & echo Older bootloader version for Tundra Tracker. >>%logname%) 
+if %bl_version_current% LSS %bl_version_required% (@echo This is an older bootloader version for Tundra Tracker. & echo Older bootloader version for Tundra Tracker. >>%logname%) 
 if %bl_version_current% LSS %bl_version_required% goto :bad_bl_version
 if %bl_version_current% GTR %bl_version_required% (@echo This is a newer than expected bootloader version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected bootloader version for Tundra Tracker, quit! >>%logname%)
 if %bl_version_current% GTR %bl_version_required% goto :stop
@@ -187,7 +187,7 @@ if %hwid_ok% == true (
   @echo Device radio version is "v%rad_version_current%".
   if %rad_version_current% == %rad_version_required% (@echo This is the correct radio version for Tundra Tracker. & echo Correct radio version for Tundra Tracker. >>%logname%)
   if %rad_version_current% == %rad_version_required% goto :stop
-  if %rad_version_current% LSS %rad_version_required% (@echo This is a older radio version for Tundra Tracker. & echo Older radio version for Tundra Tracker. >>%logname%) 
+  if %rad_version_current% LSS %rad_version_required% (@echo This is an older radio version for Tundra Tracker. & echo Older radio version for Tundra Tracker. >>%logname%) 
   if %rad_version_current% LSS %rad_version_required% goto :bad_rad_version
   if %rad_version_current% GTR %rad_version_required% (@echo This is a newer than expected radio version for Tundra Tracker, quit for safety! & echo WARNING: Newer than expected radio version for Tundra Tracker, quit! >>%logname%)
   if %rad_version_current% GTR %rad_version_required% goto :stop
