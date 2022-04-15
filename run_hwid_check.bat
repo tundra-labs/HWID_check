@@ -46,6 +46,7 @@ set /a rad_version_required=1632527453
 set "fpga_version_current=0(0)"
 set "fpga_version_required=538(2.26/7/2)"
 set "fpga_version_missing=0(0.0/255/15)"
+set fpga_up=false
 
 if /I "%c%" == "y" goto :check_compatibility
 if /I "%c%" == "n" set /P c=Script was aborted, no devices were changed. Press Enter to quit... & Exit /b
@@ -153,6 +154,9 @@ if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_versio
 if not "%fpga_version_current%" == "%fpga_version_missing%" if not "%fpga_version_current%" == "%fpga_version_required%" goto :stop
 if "%fpga_version_current%" == "%fpga_version_required%" (@echo This is the correct FPGA version for Tundra Tracker. & echo Correct FPGA version for Tundra Tracker. >>%logname%)
 if "%fpga_version_current%" == "%fpga_version_required%" goto :fpga_is_safe
+if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" (@echo This is the correct FPGA version for Tundra Tracker. & echo Correct FPGA version for Tundra Tracker. >>%logname%)
+if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" (set fpga_up=true)
+if not "%fpga_version_current%" == "%fpga_version_required%" if not "%fpga_version_current%" == "%fpga_version_missing%" goto :fpga_is_safe
 @echo The FPGA version could not be identified, quit for safety! Please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! & echo WRANING: FPGA version could not be identified, quit! "(Script end)" >>%logname%)
 goto :stop
 
@@ -189,6 +193,10 @@ if %hwid_ok% == true (
   if %rad_version_current% GTR %rad_version_required% goto :stop
 )
 
+if %hwid_ok% == true if %fpga_up% == true (
+    goto :bad_fpga
+)
+
 echo Script failed, please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'! >>%logname%
 @echo Script failed, please notify @Keigun on 'https://forum.tundra-labs.com/u/keigun/'!
 echo+ >>%logname%
@@ -217,6 +225,12 @@ goto :stop
 @echo+
 echo+ >>%logname%
 @echo Radio update was aborted! & echo User declined radio update! >>%logname%
+goto :stop
+
+:err_fpga_check
+@echo+
+echo+ >>%logname%
+@echo FPGA update was aborted! & echo User declined FPGA update! >>%logname%
 goto :stop
 
 :bad_hwid
@@ -333,6 +347,32 @@ lighthouse_watchman_update.exe -s %serial_number% --hwid %hwid_current% --target
 echo+ >>%logname%
 timeout /t 4 /nobreak >nul
 @echo -- Updating radio done -- & echo -- Updating radio done-- >>%logname%
+@echo+
+echo+ >>%logname%
+echo+ Next device verification cycle log is hwid_check_%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%_c%nextcycle%.log. >>%logname%
+goto :check_compatibility
+
+:bad_fpga
+@echo+
+set /P c=FPGA version is outdated, would you like to update? (y)es, (n)o: 
+@echo+
+if /I "%c%" == "y" goto :update_fpga
+if /I "%c%" == "n" goto :err_fpga_check
+goto :bad_fpga
+
+:update_fpga
+@echo+
+echo+ >>%logname%
+@echo -- Updating FPGA -- & echo -- Updating FPGA -- >>%logname%
+@echo+
+echo+ >>%logname%
+echo+ Executing FPGA update >>%logname%
+lighthouse_watchman_update.exe --target=ice40 ice40cm_hdk_20181219v2_26.fw >>%logname% 2>&1
+@echo+ ... Saved info to log file ...
+@echo+
+echo+ >>%logname%
+timeout /t 4 /nobreak >nul
+@echo -- Updating FPGA done -- & echo -- Updating FPGA done-- >>%logname%
 @echo+
 echo+ >>%logname%
 echo+ Next device verification cycle log is hwid_check_%dt:~0,4%%dt:~4,2%%dt:~6,2%%dt:~8,2%%dt:~10,2%%dt:~12,2%_c%nextcycle%.log. >>%logname%
