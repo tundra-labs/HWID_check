@@ -1,7 +1,7 @@
 @echo off
 
-set vnum=1.8
-set vdate=April 12th 2022
+set vnum=1.9
+set vdate=April 15h 2022
 
 @echo Please check https://github.com/tundra-labs/HWID_check to make sure that you have the latest version of this script!
 @echo This is version number %vnum% changed on %vdate%.
