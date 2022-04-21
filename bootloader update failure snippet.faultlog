@@ -1,0 +1,59 @@
+ This file is used for fault finding.
+ 
+
+
+
+
+
+
+
+ Logfile of bootloader update failure which possibly caused the FPGA firmware to not exist anymore.
+ 
+
+-- Updating bootloader -- 
+ 
+ Executing bootloader update 
+Version:  lighthouse_watchman_update.exe (buildbot_vortex-windows_steamvr_rel_win32@vortex-windows)  07006578
+Searching for devices with  SN LHR-DEVICESERIALNUMBER and HWID matching 0xf1030009
+Found 1 matching device
+Serial: LHR-DEVICESERIALNUMBER, PID: 2300, HWID: f1030009 (unknown)
+Updating device: 1 of 1
+Serial: LHR-DEVICESERIALNUMBER, PID: 2300, HWID: f1030009 (unknown)
+Attempting to update WATCHMAN v3 (target: 1) via application
+Computed checksum (offset 0): 00000000
+Starting update...
+Sending data...
+...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................Done
+Error: Update verification failed: 2
+Error: Failed to update firmware. Retrying...
+Computed checksum (offset 0): 00000000
+Starting update...
+Error: Failed to start update: 1913860112
+Error: Failed to update firmware. Retrying...
+Computed checksum (offset 0): 00000000
+Starting update...
+Error: Failed to start update: 1913860112
+Error: Failed to update firmware. Retrying...
+Computed checksum (offset 0): 00000000
+Starting update...
+Error: Failed to start update: 1913860112
+Error: Failed to update firmware. Retrying...
+Computed checksum (offset 0): 00000000
+Starting update...
+Error: Failed to start update: 1913860112
+Error: Failed to update firmware.
+Error: Failed to send reset command.
+ 
+-- Updating bootloader done-- 
+
+
+
+
+
+
+
+
+ When checking the tracker with "lighthouse_console.exe version" the tracker was also missing the config file.
+ 
+ 
+LHR-DEVICESERIALNUMBER: Device does not have a stored config
